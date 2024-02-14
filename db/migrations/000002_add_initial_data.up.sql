@@ -1,6 +1,6 @@
-INSERT INTO plan (name, description) VALUES ('Basico', 'Plan base'),
-                                            ('Intermedio', 'Plan intermedio'),
-                                            ('Pro', 'Plan pro, con todas las funcionalidades disponibles');
+INSERT INTO plan (name) VALUES  ('Basico'),
+                                ('Intermedio'),
+                                ('Pro');
 
 INSERT INTO plan_country (plan_id, country, price) VALUES   (1, 'ARG', 5000),
                                                             (2, 'ARG', 7000),
@@ -27,14 +27,14 @@ INSERT INTO promotion (name, discount_percent) VALUES   ('5off', 5),
                                                         ('95off', 95),
                                                         ('100off', 100);
 
-INSERT INTO permission (id, name, description, parent_id) VALUES    (1, 'Admin Roles', 'Permite realizar todas las operaciones sobre roles', null),
-                                                                    (2, 'Ver Roles', 'Permite visualizar los roles existentes', 1),
-                                                                    (3, 'Crear Rol', 'Permite crear un nuevo rol', 1),
-                                                                    (4, 'Actualizar Rol', 'Permite actualizar un rol existente', 1),
-                                                                    (5, 'Eliminar Rol', 'Permite eliminar un rol', 1),
-                                                                    (6, 'Admin Usuarios', 'Permite realizar todas las operaciones sobre usuarios', null),
-                                                                    (7, 'Ver Usuario', 'Permite visualizar los usuarios existentes', 6),
-                                                                    (8, 'Crear Usuario', 'Permite crear un nuevo usuario', 6),
-                                                                    (9, 'Actualizar Usuario', 'Permite actualizar un usuario existente', 6),
-                                                                    (10, 'Eliminar Usuario', 'Permite eliminar un usuario', 6),
-                                                                    (11, 'Visualizar información de la cuenta', 'Permite visualizar toda la información de la cuenta, incluyendo la información de pago y planes', null);
+INSERT INTO permission (id, name, parent_id) VALUES (1, 'Admin Roles', null),
+                                                    (2, 'Ver Roles', 1),
+                                                    (3, 'Crear Rol', 1),
+                                                    (4, 'Actualizar Rol', 1),
+                                                    (5, 'Eliminar Rol', 1),
+                                                    (6, 'Admin Usuarios', null),
+                                                    (7, 'Ver Usuario', 6),
+                                                    (8, 'Crear Usuario', 6),
+                                                    (9, 'Actualizar Usuario', 6),
+                                                    (10, 'Eliminar Usuario', 6),
+                                                    (11, 'Visualizar información de la cuenta', null);

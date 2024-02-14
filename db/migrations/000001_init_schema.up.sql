@@ -25,8 +25,7 @@ CREATE TABLE "account_address" (
 
 CREATE TABLE "plan" (
   "id" bigserial PRIMARY KEY,
-  "name" varchar UNIQUE NOT NULL,
-  "description" varchar
+  "name" varchar UNIQUE NOT NULL
 );
 
 CREATE TABLE "plan_country" (
@@ -94,40 +93,41 @@ CREATE TABLE "account_promotion" (
 CREATE TABLE "permission" (
   "id" bigserial PRIMARY KEY,
   "name" varchar UNIQUE NOT NULL,
-  "description" varchar,
   "parent_id" int8
 );
 
 CREATE TABLE "role" (
   "id" bigserial PRIMARY KEY,
   "name" varchar UNIQUE NOT NULL,
-  "description" varchar,
   "account_id" bigserial NOT NULL
 );
 
 CREATE TABLE "user" (
   "id" bigserial PRIMARY KEY,
-  "username" varchar UNIQUE NOT NULL,
+  "username" varchar NOT NULL,
   "password" varchar NOT NULL,
   "name" varchar NOT NULL,
   "lastname" varchar NOT NULL,
   "email" varchar NOT NULL,
   "phone" varchar,
   "active" boolean NOT NULL DEFAULT true,
+  "is_admin" boolean NOT NULL DEFAULT false,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now()),
   "password_changed_at" timestamptz NOT NULL DEFAULT (now()),
   "role_id" bigserial NOT NULL,
-  "account_id" bigserial NOT NULL
+  "account_id" bigserial NOT NULL,
+  UNIQUE (username, account_id),
+  UNIQUE (email, account_id)
 );
+
+ALTER TABLE "user" ADD FOREIGN KEY ("account_id") REFERENCES "account" ("id");
 
 COMMENT ON TABLE "permission" IS 'Common table shared by all accounts';
 
 ALTER TABLE "account_address" ADD FOREIGN KEY ("account_id") REFERENCES "account" ("id");
 
 ALTER TABLE "role" ADD FOREIGN KEY ("account_id") REFERENCES "account" ("id");
-
-ALTER TABLE "user" ADD FOREIGN KEY ("account_id") REFERENCES "account" ("id");
 
 ALTER TABLE "module_country" ADD FOREIGN KEY ("module_id") REFERENCES "module" ("id");
 

@@ -86,16 +86,14 @@ type ModuleFeature struct {
 
 // Common table shared by all accounts
 type Permission struct {
-	ID          int64       `json:"id"`
-	Name        string      `json:"name"`
-	Description pgtype.Text `json:"description"`
-	ParentID    pgtype.Int8 `json:"parent_id"`
+	ID       int64       `json:"id"`
+	Name     string      `json:"name"`
+	ParentID pgtype.Int8 `json:"parent_id"`
 }
 
 type Plan struct {
-	ID          int64       `json:"id"`
-	Name        string      `json:"name"`
-	Description pgtype.Text `json:"description"`
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
 }
 
 type PlanCountry struct {
@@ -117,10 +115,9 @@ type Promotion struct {
 }
 
 type Role struct {
-	ID          int64       `json:"id"`
-	Name        string      `json:"name"`
-	Description pgtype.Text `json:"description"`
-	AccountID   int64       `json:"account_id"`
+	ID        int64  `json:"id"`
+	Name      string `json:"name"`
+	AccountID int64  `json:"account_id"`
 }
 
 type RolePermission struct {
@@ -137,6 +134,7 @@ type User struct {
 	Email             string      `json:"email"`
 	Phone             pgtype.Text `json:"phone"`
 	Active            bool        `json:"active"`
+	IsAdmin           bool        `json:"is_admin"`
 	CreatedAt         time.Time   `json:"created_at"`
 	UpdatedAt         time.Time   `json:"updated_at"`
 	PasswordChangedAt time.Time   `json:"password_changed_at"`

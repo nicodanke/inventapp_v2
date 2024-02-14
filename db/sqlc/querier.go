@@ -11,9 +11,21 @@ import (
 type Querier interface {
 	CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error)
 	CreateAccountPlan(ctx context.Context, arg CreateAccountPlanParams) (AccountPlan, error)
+	CreateRole(ctx context.Context, arg CreateRoleParams) (Role, error)
+	CreateRolePermission(ctx context.Context, arg CreateRolePermissionParams) (RolePermission, error)
+	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteAccount(ctx context.Context, id int64) error
+	DeleteRole(ctx context.Context, arg DeleteRoleParams) error
+	DeleteUser(ctx context.Context, arg DeleteUserParams) error
 	GetAccount(ctx context.Context, id int64) (Account, error)
+	GetPlanCountry(ctx context.Context, arg GetPlanCountryParams) (PlanCountry, error)
+	GetRole(ctx context.Context, arg GetRoleParams) (Role, error)
+	GetUser(ctx context.Context, arg GetUserParams) (User, error)
+	Getplan(ctx context.Context, id int64) (Plan, error)
 	ListAccounts(ctx context.Context, arg ListAccountsParams) ([]Account, error)
+	ListPlans(ctx context.Context, arg ListPlansParams) ([]Plan, error)
+	ListRoles(ctx context.Context, arg ListRolesParams) ([]Role, error)
+	ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error)
 	UpdateAccount(ctx context.Context, arg UpdateAccountParams) (Account, error)
 	UpdateAccountPlan(ctx context.Context, arg UpdateAccountPlanParams) (AccountPlan, error)
 }
