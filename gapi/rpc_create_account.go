@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	db "github.com/nicodanke/inventapp_v2/db/sqlc"
-	"github.com/nicodanke/inventapp_v2/pb"
+	"github.com/nicodanke/inventapp_v2/pb/requests/v1/account"
 	"github.com/nicodanke/inventapp_v2/utils"
 	"github.com/nicodanke/inventapp_v2/validators"
 	accountValidator "github.com/nicodanke/inventapp_v2/validators/account"
@@ -15,7 +15,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) CreateAccount(ctx context.Context, req *pb.CreateAccountRequest) (*pb.CreateAccountResponse, error) {
+func (server *Server) CreateAccount(ctx context.Context, req *account.CreateAccountRequest) (*account.CreateAccountResponse, error) {
 	violations := validateCreateAccountRequest(req)
 	if violations != nil {
 		return nil, invalidArgumentError(violations)
@@ -48,14 +48,14 @@ func (server *Server) CreateAccount(ctx context.Context, req *pb.CreateAccountRe
 		return nil, status.Errorf(codes.Internal, "Fail to create account: %s", err)
 	}
 
-	rsp := &pb.CreateAccountResponse{
+	rsp := &account.CreateAccountResponse{
 		Account: convertAccount(result.Account),
 		User:    convertUser(result.User),
 	}
 	return rsp, nil
 }
 
-func validateCreateAccountRequest(req *pb.CreateAccountRequest) (violations []*errdetails.BadRequest_FieldViolation) {
+func validateCreateAccountRequest(req *account.CreateAccountRequest) (violations []*errdetails.BadRequest_FieldViolation) {
 	if err := userValidator.ValidateName(req.GetName()); err != nil {
 		violations = append(violations, fieldViolation("name", err))
 	}

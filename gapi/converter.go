@@ -2,12 +2,12 @@ package gapi
 
 import (
 	db "github.com/nicodanke/inventapp_v2/db/sqlc"
-	"github.com/nicodanke/inventapp_v2/pb"
+	"github.com/nicodanke/inventapp_v2/pb/models"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func convertUser(user db.User) *pb.User {
-	return &pb.User{
+func convertUser(user db.User) *models.User {
+	return &models.User{
 		Id:                user.ID,
 		Username:          user.Username,
 		Name:              user.Name,
@@ -21,8 +21,8 @@ func convertUser(user db.User) *pb.User {
 	}
 }
 
-func convertAccount(user db.Account) *pb.Account {
-	return &pb.Account{
+func convertAccount(user db.Account) *models.Account {
+	return &models.Account{
 		Id:          user.ID,
 		Code:        user.Code,
 		CompanyName: user.CompanyName,

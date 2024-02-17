@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/api/annotations.proto";
+import "requests/v1/account/rpc_create_account.proto";
+import "requests/v1/account/rpc_update_account.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/nicodanke/inventapp_v2/pb";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+    info: {
+        title: "InventApp API";
+        version: "1.0";
+        contact: {
+            name: "Nicolás Dankiewicz";
+            url: "https://github.com/nicodanke/inventapp_v2";
+            email: "nicodanki@hotmail.com";
+        };
+    };
+};
+
+service InventAppV1 {
+    rpc CreateAccount (inventapp_v2.requests.v1.account.CreateAccountRequest) returns (inventapp_v2.requests.v1.account.CreateAccountResponse) {
+        option (google.api.http) = {
+            post: "/v1/accounts"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Allow to create a new account and base user and configurations";
+            summary: "Create Account"
+        };  
+    }
+
+    rpc UpdateAccount (inventapp_v2.requests.v1.account.UpdateAccountRequest) returns (inventapp_v2.requests.v1.account.UpdateAccountResponse) {
+        option (google.api.http) = {
+            patch: "/v1/accounts/{id}"
+            body: "*"
+          };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Allow to make a partial update of an account";
+            summary: "Update Account"
+        };  
+    }
+}

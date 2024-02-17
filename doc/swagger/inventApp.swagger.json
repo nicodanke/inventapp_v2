@@ -11,7 +11,7 @@
   },
   "tags": [
     {
-      "name": "InventApp"
+      "name": "InventAppV1"
     }
   ],
   "consumes": [
@@ -25,12 +25,12 @@
       "post": {
         "summary": "Create Account",
         "description": "Allow to create a new account and base user and configurations",
-        "operationId": "InventApp_CreateAccount",
+        "operationId": "InventAppV1_CreateAccount",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbCreateAccountResponse"
+              "$ref": "#/definitions/accountCreateAccountResponse"
             }
           },
           "default": {
@@ -46,12 +46,12 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbCreateAccountRequest"
+              "$ref": "#/definitions/accountCreateAccountRequest"
             }
           }
         ],
         "tags": [
-          "InventApp"
+          "InventAppV1"
         ]
       }
     },
@@ -59,12 +59,12 @@
       "patch": {
         "summary": "Update Account",
         "description": "Allow to make a partial update of an account",
-        "operationId": "InventApp_UpdateAccount",
+        "operationId": "InventAppV1_UpdateAccount",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbUpdateAccountResponse"
+              "$ref": "#/definitions/accountUpdateAccountResponse"
             }
           },
           "default": {
@@ -112,13 +112,58 @@
           }
         ],
         "tags": [
-          "InventApp"
+          "InventAppV1"
         ]
       }
     }
   },
   "definitions": {
-    "pbAccount": {
+    "accountCreateAccountRequest": {
+      "type": "object",
+      "properties": {
+        "companyName": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "lastname": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "accountCreateAccountResponse": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/definitions/modelsAccount"
+        },
+        "user": {
+          "$ref": "#/definitions/modelsUser"
+        }
+      }
+    },
+    "accountUpdateAccountResponse": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/definitions/modelsAccount"
+        }
+      }
+    },
+    "modelsAccount": {
       "type": "object",
       "properties": {
         "id": {
@@ -149,52 +194,7 @@
         }
       }
     },
-    "pbCreateAccountRequest": {
-      "type": "object",
-      "properties": {
-        "companyName": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "lastname": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        },
-        "country": {
-          "type": "string"
-        }
-      }
-    },
-    "pbCreateAccountResponse": {
-      "type": "object",
-      "properties": {
-        "account": {
-          "$ref": "#/definitions/pbAccount"
-        },
-        "user": {
-          "$ref": "#/definitions/pbUser"
-        }
-      }
-    },
-    "pbUpdateAccountResponse": {
-      "type": "object",
-      "properties": {
-        "account": {
-          "$ref": "#/definitions/pbAccount"
-        }
-      }
-    },
-    "pbUser": {
+    "modelsUser": {
       "type": "object",
       "properties": {
         "id": {

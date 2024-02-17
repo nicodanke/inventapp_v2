@@ -10,7 +10,7 @@ import (
 )
 
 type Server struct {
-	pb.UnimplementedInventAppServer
+	pb.UnimplementedInventAppV1Server
 	config     utils.Config
 	store      db.Store
 	tokenMaker token.Maker

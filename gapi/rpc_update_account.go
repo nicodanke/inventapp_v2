@@ -6,7 +6,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgtype"
 	db "github.com/nicodanke/inventapp_v2/db/sqlc"
-	"github.com/nicodanke/inventapp_v2/pb"
+	"github.com/nicodanke/inventapp_v2/pb/requests/v1/account"
 	"github.com/nicodanke/inventapp_v2/utils"
 	"github.com/nicodanke/inventapp_v2/validators"
 	accountValidator "github.com/nicodanke/inventapp_v2/validators/account"
@@ -15,7 +15,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) UpdateAccount(ctx context.Context, req *pb.UpdateAccountRequest) (*pb.UpdateAccountResponse, error) {
+func (server *Server) UpdateAccount(ctx context.Context, req *account.UpdateAccountRequest) (*account.UpdateAccountResponse, error) {
 	violations := validateUpdateAccountRequest(req)
 	if violations != nil {
 		return nil, invalidArgumentError(violations)
@@ -54,13 +54,13 @@ func (server *Server) UpdateAccount(ctx context.Context, req *pb.UpdateAccountRe
 		return nil, status.Errorf(codes.Internal, "Fail to update account: %s", err)
 	}
 
-	rsp := &pb.UpdateAccountResponse{
+	rsp := &account.UpdateAccountResponse{
 		Account: convertAccount(result),
 	}
 	return rsp, nil
 }
 
-func (server *Server) ActivateAccount(ctx context.Context, req *pb.CreateAccountRequest) (*pb.CreateAccountResponse, error) {
+func (server *Server) ActivateAccount(ctx context.Context, req *account.CreateAccountRequest) (*account.CreateAccountResponse, error) {
 	violations := validateCreateAccountRequest(req)
 	if violations != nil {
 		return nil, invalidArgumentError(violations)
@@ -93,14 +93,14 @@ func (server *Server) ActivateAccount(ctx context.Context, req *pb.CreateAccount
 		return nil, status.Errorf(codes.Internal, "Fail to create account: %s", err)
 	}
 
-	rsp := &pb.CreateAccountResponse{
+	rsp := &account.CreateAccountResponse{
 		Account: convertAccount(result.Account),
 		User:    convertUser(result.User),
 	}
 	return rsp, nil
 }
 
-func validateUpdateAccountRequest(req *pb.UpdateAccountRequest) (violations []*errdetails.BadRequest_FieldViolation) {
+func validateUpdateAccountRequest(req *account.UpdateAccountRequest) (violations []*errdetails.BadRequest_FieldViolation) {
 	if req.CompanyName != nil {
 		if err := accountValidator.ValidateCompanyName(req.GetCompanyName()); err != nil {
 			violations = append(violations, fieldViolation("companyName", err))

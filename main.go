@@ -68,7 +68,7 @@ func runGRPCServer(config utils.Config, store db.Store) {
 
 	grpcLogger := grpc.UnaryInterceptor(gapi.GrpcLogger)
 	grpcServer := grpc.NewServer(grpcLogger)
-	pb.RegisterInventAppServer(grpcServer, server)
+	pb.RegisterInventAppV1Server(grpcServer, server)
 	reflection.Register(grpcServer)
 
 	listener, err := net.Listen("tcp", config.GRPCServerAddress)
@@ -94,7 +94,7 @@ func runGRPCGatewayServer(config utils.Config, store db.Store) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	err = pb.RegisterInventAppHandlerServer(ctx, grpcMux, server)
+	err = pb.RegisterInventAppV1HandlerServer(ctx, grpcMux, server)
 	if err != nil {
 		log.Error().Err(err).Msg("Cannot register handler server")
 	}
