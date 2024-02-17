@@ -9,6 +9,10 @@ INSERT INTO "user" (
 SELECT * FROM "user"
 WHERE account_id = $1 AND id = $2 LIMIT 1;
 
+-- name: GetUserByUsername :one
+SELECT * FROM "user"
+WHERE username = $1 LIMIT 1;
+
 -- name: ListUsers :many
 SELECT * FROM "user"
 WHERE account_id = $1

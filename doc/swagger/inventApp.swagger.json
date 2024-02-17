@@ -115,6 +115,40 @@
           "InventAppV1"
         ]
       }
+    },
+    "/v1/login": {
+      "post": {
+        "summary": "Login User",
+        "description": "Login and get a token (PASETO) to make authenticated requests.",
+        "operationId": "InventAppV1_Login",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/loginLoginResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/loginLoginRequest"
+            }
+          }
+        ],
+        "tags": [
+          "InventAppV1"
+        ]
+      }
     }
   },
   "definitions": {
@@ -160,6 +194,42 @@
       "properties": {
         "account": {
           "$ref": "#/definitions/modelsAccount"
+        }
+      }
+    },
+    "loginLoginRequest": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "loginLoginResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/modelsUser"
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "accessToken": {
+          "type": "string"
+        },
+        "refreshToken": {
+          "type": "string"
+        },
+        "accessTokenExpiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "refreshTokenExpiresAt": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },

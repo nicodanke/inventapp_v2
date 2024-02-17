@@ -8,9 +8,10 @@ import (
 )
 
 var (
-	isValidUsername = regexp.MustCompile(`^[a-zA-Z0-9_-]+$`).MatchString
-	isValidName     = regexp.MustCompile(`^[a-zA-Z\s]+$`).MatchString
-	isValidLastname = regexp.MustCompile(`^[a-zA-Z\s]+$`).MatchString
+	isValidUsername     = regexp.MustCompile(`^[a-zA-Z0-9_-]+$`).MatchString
+	isValidName         = regexp.MustCompile(`^[a-zA-Z\s]+$`).MatchString
+	isValidLastname     = regexp.MustCompile(`^[a-zA-Z\s]+$`).MatchString
+	isValidFullUsername = regexp.MustCompile(`^[a-zA-Z0-9_-]+@[a-zA-Z0-9]+$`).MatchString
 )
 
 func ValidateUsername(value string) error {
@@ -20,6 +21,17 @@ func ValidateUsername(value string) error {
 	}
 	if !isValidUsername(value) {
 		return fmt.Errorf("username only can contain lower case letters, diggits or underscore")
+	}
+	return nil
+}
+
+func ValidateFullUsername(value string) error {
+	err := v.ValidString(value, 3, 100)
+	if err != nil {
+		return err
+	}
+	if !isValidFullUsername(value) {
+		return fmt.Errorf("username is invalid")
 	}
 	return nil
 }

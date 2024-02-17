@@ -5,6 +5,7 @@ package pb;
 import "google/api/annotations.proto";
 import "requests/v1/account/rpc_create_account.proto";
 import "requests/v1/account/rpc_update_account.proto";
+import "requests/v1/login/rpc_login.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "github.com/nicodanke/inventapp_v2/pb";
@@ -22,6 +23,20 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 };
 
 service InventAppV1 {
+    // LOGIN
+    rpc Login (inventapp_v2.requests.v1.login.LoginRequest) returns (inventapp_v2.requests.v1.login.LoginResponse) {
+        option (google.api.http) = {
+            post: "/v1/login"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Login and get a token (PASETO) to make authenticated requests.";
+            summary: "Login User"
+        };    
+    }
+
+
+    // ACCOUNT
     rpc CreateAccount (inventapp_v2.requests.v1.account.CreateAccountRequest) returns (inventapp_v2.requests.v1.account.CreateAccountResponse) {
         option (google.api.http) = {
             post: "/v1/accounts"

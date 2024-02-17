@@ -9,6 +9,7 @@ package pb
 import (
 	context "context"
 	account "github.com/nicodanke/inventapp_v2/pb/requests/v1/account"
+	login "github.com/nicodanke/inventapp_v2/pb/requests/v1/login"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -20,6 +21,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
+	InventAppV1_Login_FullMethodName         = "/pb.InventAppV1/Login"
 	InventAppV1_CreateAccount_FullMethodName = "/pb.InventAppV1/CreateAccount"
 	InventAppV1_UpdateAccount_FullMethodName = "/pb.InventAppV1/UpdateAccount"
 )
@@ -28,6 +30,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InventAppV1Client interface {
+	// LOGIN
+	Login(ctx context.Context, in *login.LoginRequest, opts ...grpc.CallOption) (*login.LoginResponse, error)
+	// ACCOUNT
 	CreateAccount(ctx context.Context, in *account.CreateAccountRequest, opts ...grpc.CallOption) (*account.CreateAccountResponse, error)
 	UpdateAccount(ctx context.Context, in *account.UpdateAccountRequest, opts ...grpc.CallOption) (*account.UpdateAccountResponse, error)
 }
@@ -38,6 +43,15 @@ type inventAppV1Client struct {
 
 func NewInventAppV1Client(cc grpc.ClientConnInterface) InventAppV1Client {
 	return &inventAppV1Client{cc}
+}
+
+func (c *inventAppV1Client) Login(ctx context.Context, in *login.LoginRequest, opts ...grpc.CallOption) (*login.LoginResponse, error) {
+	out := new(login.LoginResponse)
+	err := c.cc.Invoke(ctx, InventAppV1_Login_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *inventAppV1Client) CreateAccount(ctx context.Context, in *account.CreateAccountRequest, opts ...grpc.CallOption) (*account.CreateAccountResponse, error) {
@@ -62,6 +76,9 @@ func (c *inventAppV1Client) UpdateAccount(ctx context.Context, in *account.Updat
 // All implementations must embed UnimplementedInventAppV1Server
 // for forward compatibility
 type InventAppV1Server interface {
+	// LOGIN
+	Login(context.Context, *login.LoginRequest) (*login.LoginResponse, error)
+	// ACCOUNT
 	CreateAccount(context.Context, *account.CreateAccountRequest) (*account.CreateAccountResponse, error)
 	UpdateAccount(context.Context, *account.UpdateAccountRequest) (*account.UpdateAccountResponse, error)
 	mustEmbedUnimplementedInventAppV1Server()
@@ -71,6 +88,9 @@ type InventAppV1Server interface {
 type UnimplementedInventAppV1Server struct {
 }
 
+func (UnimplementedInventAppV1Server) Login(context.Context, *login.LoginRequest) (*login.LoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
 func (UnimplementedInventAppV1Server) CreateAccount(context.Context, *account.CreateAccountRequest) (*account.CreateAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAccount not implemented")
 }
@@ -88,6 +108,24 @@ type UnsafeInventAppV1Server interface {
 
 func RegisterInventAppV1Server(s grpc.ServiceRegistrar, srv InventAppV1Server) {
 	s.RegisterService(&InventAppV1_ServiceDesc, srv)
+}
+
+func _InventAppV1_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(login.LoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InventAppV1Server).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InventAppV1_Login_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InventAppV1Server).Login(ctx, req.(*login.LoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _InventAppV1_CreateAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -133,6 +171,10 @@ var InventAppV1_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.InventAppV1",
 	HandlerType: (*InventAppV1Server)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Login",
+			Handler:    _InventAppV1_Login_Handler,
+		},
 		{
 			MethodName: "CreateAccount",
 			Handler:    _InventAppV1_CreateAccount_Handler,

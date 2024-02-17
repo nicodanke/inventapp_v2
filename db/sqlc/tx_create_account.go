@@ -87,7 +87,7 @@ func (store *SQLStore) CreateAccountTx(ctx context.Context, arg CreateAccountTxP
 			Name:      arg.Name,
 			Lastname:  arg.Lastname,
 			Email:     arg.Email,
-			Username:  arg.Username,
+			Username:  arg.Username + "@" + arg.Code,
 			Password:  arg.HashedPassword,
 			RoleID:    role.ID,
 		})
