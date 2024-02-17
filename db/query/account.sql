@@ -1,13 +1,17 @@
 -- name: CreateAccount :one
 INSERT INTO account (
-    code, company_name, email
+    code, company_name, email, country
 ) VALUES (
-    $1, $2, $3
+    $1, $2, $3, $4
 ) RETURNING *;
 
 -- name: GetAccount :one
 SELECT * FROM account
 WHERE id = $1 LIMIT 1;
+
+-- name: GetAccountByCode :one
+SELECT * FROM account
+WHERE code = $1 LIMIT 1;
 
 -- name: ListAccounts :many
 SELECT * FROM account
@@ -23,6 +27,7 @@ SET
     email = COALESCE(sqlc.narg(email), email),
     web_url = COALESCE(sqlc.narg(web_url), web_url),
     active = COALESCE(sqlc.narg(active), active),
+    country = COALESCE(sqlc.narg(country), country),
     updated_at = COALESCE(sqlc.narg(updated_at), updated_at)
 WHERE
     id = sqlc.arg(id)

@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	InventApp_CreateAccount_FullMethodName = "/pb.InventApp/CreateAccount"
+	InventApp_UpdateAccount_FullMethodName = "/pb.InventApp/UpdateAccount"
 )
 
 // InventAppClient is the client API for InventApp service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InventAppClient interface {
 	CreateAccount(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*CreateAccountResponse, error)
+	UpdateAccount(ctx context.Context, in *UpdateAccountRequest, opts ...grpc.CallOption) (*UpdateAccountResponse, error)
 }
 
 type inventAppClient struct {
@@ -46,11 +48,21 @@ func (c *inventAppClient) CreateAccount(ctx context.Context, in *CreateAccountRe
 	return out, nil
 }
 
+func (c *inventAppClient) UpdateAccount(ctx context.Context, in *UpdateAccountRequest, opts ...grpc.CallOption) (*UpdateAccountResponse, error) {
+	out := new(UpdateAccountResponse)
+	err := c.cc.Invoke(ctx, InventApp_UpdateAccount_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InventAppServer is the server API for InventApp service.
 // All implementations must embed UnimplementedInventAppServer
 // for forward compatibility
 type InventAppServer interface {
 	CreateAccount(context.Context, *CreateAccountRequest) (*CreateAccountResponse, error)
+	UpdateAccount(context.Context, *UpdateAccountRequest) (*UpdateAccountResponse, error)
 	mustEmbedUnimplementedInventAppServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedInventAppServer struct {
 
 func (UnimplementedInventAppServer) CreateAccount(context.Context, *CreateAccountRequest) (*CreateAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAccount not implemented")
+}
+func (UnimplementedInventAppServer) UpdateAccount(context.Context, *UpdateAccountRequest) (*UpdateAccountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateAccount not implemented")
 }
 func (UnimplementedInventAppServer) mustEmbedUnimplementedInventAppServer() {}
 
@@ -92,6 +107,24 @@ func _InventApp_CreateAccount_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InventApp_UpdateAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateAccountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InventAppServer).UpdateAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InventApp_UpdateAccount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InventAppServer).UpdateAccount(ctx, req.(*UpdateAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InventApp_ServiceDesc is the grpc.ServiceDesc for InventApp service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +135,10 @@ var InventApp_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateAccount",
 			Handler:    _InventApp_CreateAccount_Handler,
+		},
+		{
+			MethodName: "UpdateAccount",
+			Handler:    _InventApp_UpdateAccount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

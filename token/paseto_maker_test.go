@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nicodanke/bankTutorial/utils"
+	"github.com/nicodanke/inventapp_v2/utils"
 	"github.com/stretchr/testify/require"
 )
 

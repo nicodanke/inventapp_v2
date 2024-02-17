@@ -4,6 +4,7 @@ CREATE TABLE "account" (
   "company_name" varchar NOT NULL,
   "phone" varchar,
   "email" varchar NOT NULL,
+  "country" varchar NOT NULL,
   "web_url" varchar,
   "active" boolean NOT NULL DEFAULT false,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
@@ -98,8 +99,9 @@ CREATE TABLE "permission" (
 
 CREATE TABLE "role" (
   "id" bigserial PRIMARY KEY,
-  "name" varchar UNIQUE NOT NULL,
-  "account_id" bigserial NOT NULL
+  "name" varchar NOT NULL,
+  "account_id" bigserial NOT NULL,
+  UNIQUE (name, account_id)
 );
 
 CREATE TABLE "user" (

@@ -18,6 +18,7 @@ type Querier interface {
 	DeleteRole(ctx context.Context, arg DeleteRoleParams) error
 	DeleteUser(ctx context.Context, arg DeleteUserParams) error
 	GetAccount(ctx context.Context, id int64) (Account, error)
+	GetAccountByCode(ctx context.Context, code string) (Account, error)
 	GetPlanCountry(ctx context.Context, arg GetPlanCountryParams) (PlanCountry, error)
 	GetRole(ctx context.Context, arg GetRoleParams) (Role, error)
 	GetUser(ctx context.Context, arg GetUserParams) (User, error)

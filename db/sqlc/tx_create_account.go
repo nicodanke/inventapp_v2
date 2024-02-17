@@ -34,6 +34,7 @@ func (store *SQLStore) CreateAccountTx(ctx context.Context, arg CreateAccountTxP
 			Code:        arg.Code,
 			CompanyName: arg.CompanyName,
 			Email:       arg.Email,
+			Country:     arg.Country,
 		})
 		if err != nil {
 			return err

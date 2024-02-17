@@ -13,20 +13,26 @@ import (
 
 const createAccount = `-- name: CreateAccount :one
 INSERT INTO account (
-    code, company_name, email
+    code, company_name, email, country
 ) VALUES (
-    $1, $2, $3
-) RETURNING id, code, company_name, phone, email, web_url, active, created_at, updated_at
+    $1, $2, $3, $4
+) RETURNING id, code, company_name, phone, email, country, web_url, active, created_at, updated_at
 `
 
 type CreateAccountParams struct {
 	Code        string `json:"code"`
 	CompanyName string `json:"company_name"`
 	Email       string `json:"email"`
+	Country     string `json:"country"`
 }
 
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
-	row := q.db.QueryRow(ctx, createAccount, arg.Code, arg.CompanyName, arg.Email)
+	row := q.db.QueryRow(ctx, createAccount,
+		arg.Code,
+		arg.CompanyName,
+		arg.Email,
+		arg.Country,
+	)
 	var i Account
 	err := row.Scan(
 		&i.ID,
@@ -34,6 +40,7 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 		&i.CompanyName,
 		&i.Phone,
 		&i.Email,
+		&i.Country,
 		&i.WebUrl,
 		&i.Active,
 		&i.CreatedAt,
@@ -53,7 +60,7 @@ func (q *Queries) DeleteAccount(ctx context.Context, id int64) error {
 }
 
 const getAccount = `-- name: GetAccount :one
-SELECT id, code, company_name, phone, email, web_url, active, created_at, updated_at FROM account
+SELECT id, code, company_name, phone, email, country, web_url, active, created_at, updated_at FROM account
 WHERE id = $1 LIMIT 1
 `
 
@@ -66,6 +73,30 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 		&i.CompanyName,
 		&i.Phone,
 		&i.Email,
+		&i.Country,
+		&i.WebUrl,
+		&i.Active,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getAccountByCode = `-- name: GetAccountByCode :one
+SELECT id, code, company_name, phone, email, country, web_url, active, created_at, updated_at FROM account
+WHERE code = $1 LIMIT 1
+`
+
+func (q *Queries) GetAccountByCode(ctx context.Context, code string) (Account, error) {
+	row := q.db.QueryRow(ctx, getAccountByCode, code)
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.Code,
+		&i.CompanyName,
+		&i.Phone,
+		&i.Email,
+		&i.Country,
 		&i.WebUrl,
 		&i.Active,
 		&i.CreatedAt,
@@ -75,7 +106,7 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 }
 
 const listAccounts = `-- name: ListAccounts :many
-SELECT id, code, company_name, phone, email, web_url, active, created_at, updated_at FROM account
+SELECT id, code, company_name, phone, email, country, web_url, active, created_at, updated_at FROM account
 ORDER BY company_name
 LIMIT $1
 OFFSET $2
@@ -101,6 +132,7 @@ func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]A
 			&i.CompanyName,
 			&i.Phone,
 			&i.Email,
+			&i.Country,
 			&i.WebUrl,
 			&i.Active,
 			&i.CreatedAt,
@@ -124,10 +156,11 @@ SET
     email = COALESCE($3, email),
     web_url = COALESCE($4, web_url),
     active = COALESCE($5, active),
-    updated_at = COALESCE($6, updated_at)
+    country = COALESCE($6, country),
+    updated_at = COALESCE($7, updated_at)
 WHERE
-    id = $7
-RETURNING id, code, company_name, phone, email, web_url, active, created_at, updated_at
+    id = $8
+RETURNING id, code, company_name, phone, email, country, web_url, active, created_at, updated_at
 `
 
 type UpdateAccountParams struct {
@@ -136,6 +169,7 @@ type UpdateAccountParams struct {
 	Email       pgtype.Text        `json:"email"`
 	WebUrl      pgtype.Text        `json:"web_url"`
 	Active      pgtype.Bool        `json:"active"`
+	Country     pgtype.Text        `json:"country"`
 	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
 	ID          int64              `json:"id"`
 }
@@ -147,6 +181,7 @@ func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (A
 		arg.Email,
 		arg.WebUrl,
 		arg.Active,
+		arg.Country,
 		arg.UpdatedAt,
 		arg.ID,
 	)
@@ -157,6 +192,7 @@ func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (A
 		&i.CompanyName,
 		&i.Phone,
 		&i.Email,
+		&i.Country,
 		&i.WebUrl,
 		&i.Active,
 		&i.CreatedAt,

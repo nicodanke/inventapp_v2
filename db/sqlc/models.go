@@ -16,6 +16,7 @@ type Account struct {
 	CompanyName string      `json:"company_name"`
 	Phone       pgtype.Text `json:"phone"`
 	Email       string      `json:"email"`
+	Country     string      `json:"country"`
 	WebUrl      pgtype.Text `json:"web_url"`
 	Active      bool        `json:"active"`
 	CreatedAt   time.Time   `json:"created_at"`

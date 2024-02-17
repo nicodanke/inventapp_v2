@@ -46,7 +46,7 @@ server:
 	go run main.go
 
 mock:
-	mockgen -package mockdb -destination db/mock/store.go github.com/nicodanke/bankTutorial/db/sqlc Store
+	mockgen -package mockdb -destination db/mock/store.go github.com/nicodanke/inventapp_v2/db/sqlc Store
 
 proto:
 	rm -f pb/*.go
