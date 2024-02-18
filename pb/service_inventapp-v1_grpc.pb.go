@@ -27,6 +27,7 @@ const (
 	InventAppV1_CreateAccount_FullMethodName = "/pb.InventAppV1/CreateAccount"
 	InventAppV1_UpdateAccount_FullMethodName = "/pb.InventAppV1/UpdateAccount"
 	InventAppV1_CreateUser_FullMethodName    = "/pb.InventAppV1/CreateUser"
+	InventAppV1_GetRoles_FullMethodName      = "/pb.InventAppV1/GetRoles"
 	InventAppV1_CreateRole_FullMethodName    = "/pb.InventAppV1/CreateRole"
 )
 
@@ -42,6 +43,7 @@ type InventAppV1Client interface {
 	// USER
 	CreateUser(ctx context.Context, in *user.CreateUserRequest, opts ...grpc.CallOption) (*user.CreateUserResponse, error)
 	// ROLE
+	GetRoles(ctx context.Context, in *role.GetRolesRequest, opts ...grpc.CallOption) (*role.GetRolesResponse, error)
 	CreateRole(ctx context.Context, in *role.CreateRoleRequest, opts ...grpc.CallOption) (*role.CreateRoleResponse, error)
 }
 
@@ -89,6 +91,15 @@ func (c *inventAppV1Client) CreateUser(ctx context.Context, in *user.CreateUserR
 	return out, nil
 }
 
+func (c *inventAppV1Client) GetRoles(ctx context.Context, in *role.GetRolesRequest, opts ...grpc.CallOption) (*role.GetRolesResponse, error) {
+	out := new(role.GetRolesResponse)
+	err := c.cc.Invoke(ctx, InventAppV1_GetRoles_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *inventAppV1Client) CreateRole(ctx context.Context, in *role.CreateRoleRequest, opts ...grpc.CallOption) (*role.CreateRoleResponse, error) {
 	out := new(role.CreateRoleResponse)
 	err := c.cc.Invoke(ctx, InventAppV1_CreateRole_FullMethodName, in, out, opts...)
@@ -110,6 +121,7 @@ type InventAppV1Server interface {
 	// USER
 	CreateUser(context.Context, *user.CreateUserRequest) (*user.CreateUserResponse, error)
 	// ROLE
+	GetRoles(context.Context, *role.GetRolesRequest) (*role.GetRolesResponse, error)
 	CreateRole(context.Context, *role.CreateRoleRequest) (*role.CreateRoleResponse, error)
 	mustEmbedUnimplementedInventAppV1Server()
 }
@@ -129,6 +141,9 @@ func (UnimplementedInventAppV1Server) UpdateAccount(context.Context, *account.Up
 }
 func (UnimplementedInventAppV1Server) CreateUser(context.Context, *user.CreateUserRequest) (*user.CreateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
+func (UnimplementedInventAppV1Server) GetRoles(context.Context, *role.GetRolesRequest) (*role.GetRolesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRoles not implemented")
 }
 func (UnimplementedInventAppV1Server) CreateRole(context.Context, *role.CreateRoleRequest) (*role.CreateRoleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRole not implemented")
@@ -218,6 +233,24 @@ func _InventAppV1_CreateUser_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InventAppV1_GetRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(role.GetRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InventAppV1Server).GetRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InventAppV1_GetRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InventAppV1Server).GetRoles(ctx, req.(*role.GetRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _InventAppV1_CreateRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(role.CreateRoleRequest)
 	if err := dec(in); err != nil {
@@ -258,6 +291,10 @@ var InventAppV1_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateUser",
 			Handler:    _InventAppV1_CreateUser_Handler,
+		},
+		{
+			MethodName: "GetRoles",
+			Handler:    _InventAppV1_GetRoles_Handler,
 		},
 		{
 			MethodName: "CreateRole",

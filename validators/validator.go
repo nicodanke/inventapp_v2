@@ -24,3 +24,17 @@ func ValidateEmail(value string) error {
 	}
 	return nil
 }
+
+func ValidatePage(value int32) error {
+	if value < 0 {
+		return fmt.Errorf("page must be possitive")
+	}
+	return nil
+}
+
+func ValidateSize(value int32) error {
+	if value < 0 {
+		return fmt.Errorf("size must be possitive")
+	}
+	return nil
+}

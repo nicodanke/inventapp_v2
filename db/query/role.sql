@@ -9,7 +9,7 @@ INSERT INTO "role" (
 SELECT * FROM "role"
 WHERE account_id = $1 AND id = $2 LIMIT 1;
 
--- name: ListRoles :many
+-- name: GetRoles :many
 SELECT * FROM "role"
 WHERE account_id = $1
 ORDER BY name

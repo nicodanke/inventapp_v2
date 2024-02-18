@@ -36,7 +36,17 @@ func convertAccount(user db.Account) *models.Account {
 
 func convertRole(role db.Role) *models.Role {
 	return &models.Role{
-		Id:                role.ID,
-		Name:              role.Name,
+		Id:   role.ID,
+		Name: role.Name,
 	}
+}
+
+func convertRoles(roles []db.Role) []*models.Role {
+	result := make([]*models.Role, len(roles))
+
+	for i, v := range roles {
+		result[i] = convertRole(v)
+	}
+
+	return result
 }

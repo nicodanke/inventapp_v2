@@ -61,7 +61,7 @@ func (q *Queries) GetRole(ctx context.Context, arg GetRoleParams) (Role, error) 
 	return i, err
 }
 
-const listRoles = `-- name: ListRoles :many
+const getRoles = `-- name: GetRoles :many
 SELECT id, name, account_id FROM "role"
 WHERE account_id = $1
 ORDER BY name
@@ -69,14 +69,14 @@ LIMIT $2
 OFFSET $3
 `
 
-type ListRolesParams struct {
+type GetRolesParams struct {
 	AccountID int64 `json:"account_id"`
 	Limit     int32 `json:"limit"`
 	Offset    int32 `json:"offset"`
 }
 
-func (q *Queries) ListRoles(ctx context.Context, arg ListRolesParams) ([]Role, error) {
-	rows, err := q.db.Query(ctx, listRoles, arg.AccountID, arg.Limit, arg.Offset)
+func (q *Queries) GetRoles(ctx context.Context, arg GetRolesParams) ([]Role, error) {
+	rows, err := q.db.Query(ctx, getRoles, arg.AccountID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

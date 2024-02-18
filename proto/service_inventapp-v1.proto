@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "requests/v1/account/rpc_create_account.proto";
 import "requests/v1/account/rpc_update_account.proto";
 import "requests/v1/user/rpc_create_user.proto";
+import "requests/v1/role/rpc_get_roles.proto";
 import "requests/v1/role/rpc_create_role.proto";
 import "requests/v1/login/rpc_login.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
@@ -76,6 +77,16 @@ service InventAppV1 {
 
 
     // ROLE
+    rpc GetRoles (inventapp_v2.requests.v1.role.GetRolesRequest) returns (inventapp_v2.requests.v1.role.GetRolesResponse) {
+        option (google.api.http) = {
+            get: "/v1/roles"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Allow to get all roles paginated. Auth required";
+            summary: "Get all roles"
+        };  
+    }
+
     rpc CreateRole (inventapp_v2.requests.v1.role.CreateRoleRequest) returns (inventapp_v2.requests.v1.role.CreateRoleResponse) {
         option (google.api.http) = {
             post: "/v1/roles"

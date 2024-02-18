@@ -5,7 +5,7 @@ import (
 
 	db "github.com/nicodanke/inventapp_v2/db/sqlc"
 	"github.com/nicodanke/inventapp_v2/pb/requests/v1/role"
-	userValidator "github.com/nicodanke/inventapp_v2/validators/user"
+	roleValidator "github.com/nicodanke/inventapp_v2/validators/role"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 )
 
@@ -38,7 +38,7 @@ func (server *Server) CreateRole(ctx context.Context, req *role.CreateRoleReques
 
 func validateCreateRoleRequest(req *role.CreateRoleRequest) (violations []*errdetails.BadRequest_FieldViolation) {
 
-	if err := userValidator.ValidateName(req.GetName()); err != nil {
+	if err := roleValidator.ValidateName(req.GetName()); err != nil {
 		violations = append(violations, fieldViolation("name", err))
 	}
 
