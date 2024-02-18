@@ -15,6 +15,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -30,6 +31,7 @@ const (
 	InventAppV1_CreateUser_FullMethodName    = "/pb.InventAppV1/CreateUser"
 	InventAppV1_GetRoles_FullMethodName      = "/pb.InventAppV1/GetRoles"
 	InventAppV1_CreateRole_FullMethodName    = "/pb.InventAppV1/CreateRole"
+	InventAppV1_DeleteRole_FullMethodName    = "/pb.InventAppV1/DeleteRole"
 )
 
 // InventAppV1Client is the client API for InventAppV1 service.
@@ -47,6 +49,7 @@ type InventAppV1Client interface {
 	// ROLE
 	GetRoles(ctx context.Context, in *role.GetRolesRequest, opts ...grpc.CallOption) (*role.GetRolesResponse, error)
 	CreateRole(ctx context.Context, in *role.CreateRoleRequest, opts ...grpc.CallOption) (*role.CreateRoleResponse, error)
+	DeleteRole(ctx context.Context, in *role.DeleteRoleRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type inventAppV1Client struct {
@@ -120,6 +123,15 @@ func (c *inventAppV1Client) CreateRole(ctx context.Context, in *role.CreateRoleR
 	return out, nil
 }
 
+func (c *inventAppV1Client) DeleteRole(ctx context.Context, in *role.DeleteRoleRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, InventAppV1_DeleteRole_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InventAppV1Server is the server API for InventAppV1 service.
 // All implementations must embed UnimplementedInventAppV1Server
 // for forward compatibility
@@ -135,6 +147,7 @@ type InventAppV1Server interface {
 	// ROLE
 	GetRoles(context.Context, *role.GetRolesRequest) (*role.GetRolesResponse, error)
 	CreateRole(context.Context, *role.CreateRoleRequest) (*role.CreateRoleResponse, error)
+	DeleteRole(context.Context, *role.DeleteRoleRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedInventAppV1Server()
 }
 
@@ -162,6 +175,9 @@ func (UnimplementedInventAppV1Server) GetRoles(context.Context, *role.GetRolesRe
 }
 func (UnimplementedInventAppV1Server) CreateRole(context.Context, *role.CreateRoleRequest) (*role.CreateRoleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRole not implemented")
+}
+func (UnimplementedInventAppV1Server) DeleteRole(context.Context, *role.DeleteRoleRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteRole not implemented")
 }
 func (UnimplementedInventAppV1Server) mustEmbedUnimplementedInventAppV1Server() {}
 
@@ -302,6 +318,24 @@ func _InventAppV1_CreateRole_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InventAppV1_DeleteRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(role.DeleteRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InventAppV1Server).DeleteRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InventAppV1_DeleteRole_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InventAppV1Server).DeleteRole(ctx, req.(*role.DeleteRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InventAppV1_ServiceDesc is the grpc.ServiceDesc for InventAppV1 service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -336,6 +370,10 @@ var InventAppV1_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateRole",
 			Handler:    _InventAppV1_CreateRole_Handler,
+		},
+		{
+			MethodName: "DeleteRole",
+			Handler:    _InventAppV1_DeleteRole_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

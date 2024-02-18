@@ -222,6 +222,39 @@
         ]
       }
     },
+    "/v1/roles/{id}": {
+      "delete": {
+        "summary": "Delete role by id",
+        "description": "Allow to delete a role by id. Auth required",
+        "operationId": "InventAppV1_DeleteRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "InventAppV1"
+        ]
+      }
+    },
     "/v1/users": {
       "get": {
         "summary": "Get all users",

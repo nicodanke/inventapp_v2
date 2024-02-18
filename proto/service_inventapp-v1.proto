@@ -9,8 +9,10 @@ import "requests/v1/user/rpc_get_users.proto";
 import "requests/v1/user/rpc_create_user.proto";
 import "requests/v1/role/rpc_get_roles.proto";
 import "requests/v1/role/rpc_create_role.proto";
+import "requests/v1/role/rpc_delete_role.proto";
 import "requests/v1/login/rpc_login.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/protobuf/empty.proto";
 
 option go_package = "github.com/nicodanke/inventapp_v2/pb";
 
@@ -106,6 +108,16 @@ service InventAppV1 {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Allow to create a new role. Auth required";
             summary: "Create Role"
+        };  
+    }
+
+    rpc DeleteRole (inventapp_v2.requests.v1.role.DeleteRoleRequest) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            delete: "/v1/roles/{id}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Allow to delete a role by id. Auth required";
+            summary: "Delete role by id"
         };  
     }
 }
