@@ -7,6 +7,7 @@ import "requests/v1/account/rpc_create_account.proto";
 import "requests/v1/account/rpc_update_account.proto";
 import "requests/v1/user/rpc_get_users.proto";
 import "requests/v1/user/rpc_create_user.proto";
+import "requests/v1/user/rpc_delete_user.proto";
 import "requests/v1/role/rpc_get_roles.proto";
 import "requests/v1/role/rpc_create_role.proto";
 import "requests/v1/role/rpc_delete_role.proto";
@@ -85,6 +86,16 @@ service InventAppV1 {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Allow to create a new user. Auth required";
             summary: "Create User"
+        };  
+    }
+
+    rpc DeleteUser (inventapp_v2.requests.v1.user.DeleteUserRequest) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            delete: "/v1/users/{id}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Allow to delete a user by id. Auth required";
+            summary: "Delete user by id"
         };  
     }
 

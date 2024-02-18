@@ -29,6 +29,7 @@ const (
 	InventAppV1_UpdateAccount_FullMethodName = "/pb.InventAppV1/UpdateAccount"
 	InventAppV1_GetUsers_FullMethodName      = "/pb.InventAppV1/GetUsers"
 	InventAppV1_CreateUser_FullMethodName    = "/pb.InventAppV1/CreateUser"
+	InventAppV1_DeleteUser_FullMethodName    = "/pb.InventAppV1/DeleteUser"
 	InventAppV1_GetRoles_FullMethodName      = "/pb.InventAppV1/GetRoles"
 	InventAppV1_CreateRole_FullMethodName    = "/pb.InventAppV1/CreateRole"
 	InventAppV1_DeleteRole_FullMethodName    = "/pb.InventAppV1/DeleteRole"
@@ -46,6 +47,7 @@ type InventAppV1Client interface {
 	// USER
 	GetUsers(ctx context.Context, in *user.GetUsersRequest, opts ...grpc.CallOption) (*user.GetUsersResponse, error)
 	CreateUser(ctx context.Context, in *user.CreateUserRequest, opts ...grpc.CallOption) (*user.CreateUserResponse, error)
+	DeleteUser(ctx context.Context, in *user.DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// ROLE
 	GetRoles(ctx context.Context, in *role.GetRolesRequest, opts ...grpc.CallOption) (*role.GetRolesResponse, error)
 	CreateRole(ctx context.Context, in *role.CreateRoleRequest, opts ...grpc.CallOption) (*role.CreateRoleResponse, error)
@@ -105,6 +107,15 @@ func (c *inventAppV1Client) CreateUser(ctx context.Context, in *user.CreateUserR
 	return out, nil
 }
 
+func (c *inventAppV1Client) DeleteUser(ctx context.Context, in *user.DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, InventAppV1_DeleteUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *inventAppV1Client) GetRoles(ctx context.Context, in *role.GetRolesRequest, opts ...grpc.CallOption) (*role.GetRolesResponse, error) {
 	out := new(role.GetRolesResponse)
 	err := c.cc.Invoke(ctx, InventAppV1_GetRoles_FullMethodName, in, out, opts...)
@@ -144,6 +155,7 @@ type InventAppV1Server interface {
 	// USER
 	GetUsers(context.Context, *user.GetUsersRequest) (*user.GetUsersResponse, error)
 	CreateUser(context.Context, *user.CreateUserRequest) (*user.CreateUserResponse, error)
+	DeleteUser(context.Context, *user.DeleteUserRequest) (*emptypb.Empty, error)
 	// ROLE
 	GetRoles(context.Context, *role.GetRolesRequest) (*role.GetRolesResponse, error)
 	CreateRole(context.Context, *role.CreateRoleRequest) (*role.CreateRoleResponse, error)
@@ -169,6 +181,9 @@ func (UnimplementedInventAppV1Server) GetUsers(context.Context, *user.GetUsersRe
 }
 func (UnimplementedInventAppV1Server) CreateUser(context.Context, *user.CreateUserRequest) (*user.CreateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
+func (UnimplementedInventAppV1Server) DeleteUser(context.Context, *user.DeleteUserRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
 func (UnimplementedInventAppV1Server) GetRoles(context.Context, *role.GetRolesRequest) (*role.GetRolesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRoles not implemented")
@@ -282,6 +297,24 @@ func _InventAppV1_CreateUser_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InventAppV1_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(user.DeleteUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InventAppV1Server).DeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InventAppV1_DeleteUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InventAppV1Server).DeleteUser(ctx, req.(*user.DeleteUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _InventAppV1_GetRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(role.GetRolesRequest)
 	if err := dec(in); err != nil {
@@ -362,6 +395,10 @@ var InventAppV1_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateUser",
 			Handler:    _InventAppV1_CreateUser_Handler,
+		},
+		{
+			MethodName: "DeleteUser",
+			Handler:    _InventAppV1_DeleteUser_Handler,
 		},
 		{
 			MethodName: "GetRoles",

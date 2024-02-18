@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package inventapp_v2.requests.v1.user;
+
+import "models/user.proto";
+
+option go_package = "github.com/nicodanke/inventapp_v2/pb/requests/v1/user";
+
+message DeleteUserRequest {
+    int64 id = 1;
+}

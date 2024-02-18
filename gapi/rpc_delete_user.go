@@ -1,0 +1,33 @@
+package gapi
+
+import (
+	"context"
+	"fmt"
+
+	db "github.com/nicodanke/inventapp_v2/db/sqlc"
+	"github.com/nicodanke/inventapp_v2/pb/requests/v1/user"
+	"google.golang.org/protobuf/types/known/emptypb"
+)
+
+func (server *Server) DeleteUser(ctx context.Context, req *user.DeleteUserRequest) (*emptypb.Empty, error) {
+	authPayload, err := server.authorizeUser(ctx)
+	if err != nil {
+		return nil, unauthenticatedError(err)
+	}
+
+	if req.GetId() == authPayload.UserID {
+		return nil, unprocessableError("user cannot auto delete itself")
+	}
+
+	arg := db.DeleteUserParams{
+		AccountID: authPayload.AccountID,
+		ID:        req.GetId(),
+	}
+
+	err = server.store.DeleteUser(ctx, arg)
+	if err != nil {
+		return nil, internalError(fmt.Sprintf("failed to delete user with id: %d", req.GetId()), err)
+	}
+
+	return &emptypb.Empty{}, nil
+}

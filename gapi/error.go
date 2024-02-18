@@ -31,6 +31,10 @@ func internalError(msg string, err error) error {
 	return status.Errorf(codes.Internal, "%s: %s", msg, err)
 }
 
+func unprocessableError(msg string) error {
+	return status.New(codes.Code(422), msg).Err()
+}
+
 func permissionDeniedError(msg string) error {
 	return status.Errorf(codes.PermissionDenied, "%s", msg)
 }
