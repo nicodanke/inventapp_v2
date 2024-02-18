@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "requests/v1/account/rpc_create_account.proto";
 import "requests/v1/account/rpc_update_account.proto";
 import "requests/v1/user/rpc_create_user.proto";
+import "requests/v1/role/rpc_create_role.proto";
 import "requests/v1/login/rpc_login.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
@@ -70,6 +71,19 @@ service InventAppV1 {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Allow to create a new user. Auth required";
             summary: "Create User"
+        };  
+    }
+
+
+    // ROLE
+    rpc CreateRole (inventapp_v2.requests.v1.role.CreateRoleRequest) returns (inventapp_v2.requests.v1.role.CreateRoleResponse) {
+        option (google.api.http) = {
+            post: "/v1/roles"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Allow to create a new role. Auth required";
+            summary: "Create Role"
         };  
     }
 }

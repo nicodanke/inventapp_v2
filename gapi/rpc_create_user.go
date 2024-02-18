@@ -11,8 +11,6 @@ import (
 	"github.com/nicodanke/inventapp_v2/validators"
 	userValidator "github.com/nicodanke/inventapp_v2/validators/user"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 func (server *Server) CreateUser(ctx context.Context, req *user.CreateUserRequest) (*user.CreateUserResponse, error) {
@@ -55,7 +53,7 @@ func (server *Server) CreateUser(ctx context.Context, req *user.CreateUserReques
 
 	result, err := server.store.CreateUser(ctx, arg)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Fail to update account: %s", err)
+		return nil, internalError("failed to create user", err)
 	}
 
 	rsp := &user.CreateUserResponse{

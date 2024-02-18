@@ -33,3 +33,10 @@ func convertAccount(user db.Account) *models.Account {
 		CreatedAt:   timestamppb.New(user.CreatedAt),
 	}
 }
+
+func convertRole(role db.Role) *models.Role {
+	return &models.Role{
+		Id:                role.ID,
+		Name:              role.Name,
+	}
+}

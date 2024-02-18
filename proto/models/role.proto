@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package inventapp_v2.models;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/nicodanke/inventapp_v2/pb/models";
+
+message Role {
+    int64 id = 1;
+    string name = 2;
+}
+

@@ -150,6 +150,40 @@
         ]
       }
     },
+    "/v1/roles": {
+      "post": {
+        "summary": "Create Role",
+        "description": "Allow to create a new role. Auth required",
+        "operationId": "InventAppV1_CreateRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/roleCreateRoleResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/roleCreateRoleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "InventAppV1"
+        ]
+      }
+    },
     "/v1/users": {
       "post": {
         "summary": "Create User",
@@ -298,6 +332,18 @@
         }
       }
     },
+    "modelsRole": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "modelsUser": {
       "type": "object",
       "properties": {
@@ -344,6 +390,22 @@
         }
       },
       "additionalProperties": {}
+    },
+    "roleCreateRoleRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "roleCreateRoleResponse": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "$ref": "#/definitions/modelsRole"
+        }
+      }
     },
     "rpcStatus": {
       "type": "object",
