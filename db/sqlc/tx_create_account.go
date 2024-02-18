@@ -90,6 +90,8 @@ func (store *SQLStore) CreateAccountTx(ctx context.Context, arg CreateAccountTxP
 			Username:  arg.Username + "@" + arg.Code,
 			Password:  arg.HashedPassword,
 			RoleID:    role.ID,
+			Active:    true,
+			IsAdmin:   true,
 		})
 		if err != nil {
 			return err

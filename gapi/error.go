@@ -24,7 +24,11 @@ func invalidArgumentError(violations []*errdetails.BadRequest_FieldViolation) er
 }
 
 func unauthenticatedError(err error) error {
-	return status.Errorf(codes.Unauthenticated, "Unauthorized: %s", err)
+	return status.Errorf(codes.Unauthenticated, "unauthorized: %s", err)
+}
+
+func internalError(msg string, err error) error {
+	return status.Errorf(codes.Internal, "%s: %s", msg, err)
 }
 
 func permissionDeniedError(msg string) error {

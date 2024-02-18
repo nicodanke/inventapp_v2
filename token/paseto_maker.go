@@ -15,7 +15,7 @@ type PasetoMaker struct {
 
 func NewPasetoMaker(symentricKey string) (Maker, error) {
 	if len(symentricKey) != chacha20poly1305.KeySize {
-		return nil, fmt.Errorf("Invalid key size: must be exactly %d characters", chacha20poly1305.KeySize )
+		return nil, fmt.Errorf("invalid key size: must be exactly %d characters", chacha20poly1305.KeySize )
 	}
 
 	maker := &PasetoMaker{
@@ -26,8 +26,8 @@ func NewPasetoMaker(symentricKey string) (Maker, error) {
 	return maker, nil
 }
 
-func (maker *PasetoMaker) CreateToken(username string, duration time.Duration) (string, *Payload, error) {
-	payload, err := NewPayload(username, duration)
+func (maker *PasetoMaker) CreateToken(userId int64, accountId int64, accountCode string, duration time.Duration) (string, *Payload, error) {
+	payload, err := NewPayload(userId, accountId, accountCode, duration)
 	if err != nil {
 		return "", payload, err
 	}

@@ -12,6 +12,7 @@ var (
 	isValidName         = regexp.MustCompile(`^[a-zA-Z\s]+$`).MatchString
 	isValidLastname     = regexp.MustCompile(`^[a-zA-Z\s]+$`).MatchString
 	isValidFullUsername = regexp.MustCompile(`^[a-zA-Z0-9_-]+@[a-zA-Z0-9]+$`).MatchString
+	isValidPhone        = regexp.MustCompile(`^[+\-0-9\s]+$`).MatchString
 )
 
 func ValidateUsername(value string) error {
@@ -21,6 +22,17 @@ func ValidateUsername(value string) error {
 	}
 	if !isValidUsername(value) {
 		return fmt.Errorf("username only can contain lower case letters, diggits or underscore")
+	}
+	return nil
+}
+
+func ValidatePhone(value string) error {
+	err := v.ValidString(value, 6, 100)
+	if err != nil {
+		return err
+	}
+	if !isValidPhone(value) {
+		return fmt.Errorf("phone can contain only numbers, + or -")
 	}
 	return nil
 }

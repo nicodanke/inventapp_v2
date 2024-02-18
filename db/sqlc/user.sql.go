@@ -13,9 +13,9 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO "user" (
-    account_id, name, lastname, email, username, password, phone, is_admin, role_id
+    account_id, name, lastname, email, username, password, phone, is_admin, role_id, active
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
 ) RETURNING id, username, password, name, lastname, email, phone, active, is_admin, created_at, updated_at, password_changed_at, role_id, account_id
 `
 
@@ -29,6 +29,7 @@ type CreateUserParams struct {
 	Phone     pgtype.Text `json:"phone"`
 	IsAdmin   bool        `json:"is_admin"`
 	RoleID    int64       `json:"role_id"`
+	Active    bool        `json:"active"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -42,6 +43,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.Phone,
 		arg.IsAdmin,
 		arg.RoleID,
+		arg.Active,
 	)
 	var i User
 	err := row.Scan(

@@ -2,12 +2,11 @@ package gapi
 
 import (
 	"context"
-	"strings"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
 	db "github.com/nicodanke/inventapp_v2/db/sqlc"
 	"github.com/nicodanke/inventapp_v2/pb/requests/v1/account"
-	"github.com/nicodanke/inventapp_v2/utils"
 	"github.com/nicodanke/inventapp_v2/validators"
 	accountValidator "github.com/nicodanke/inventapp_v2/validators/account"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -47,6 +46,9 @@ func (server *Server) UpdateAccount(ctx context.Context, req *account.UpdateAcco
 			String: req.GetCompanyName(),
 			Valid:  req.Country != nil,
 		},
+		UpdatedAt: pgtype.Timestamptz{
+			Time: time.Now().UTC(),
+		},
 	}
 
 	result, err := server.store.UpdateAccount(ctx, arg)
@@ -56,46 +58,6 @@ func (server *Server) UpdateAccount(ctx context.Context, req *account.UpdateAcco
 
 	rsp := &account.UpdateAccountResponse{
 		Account: convertAccount(result),
-	}
-	return rsp, nil
-}
-
-func (server *Server) ActivateAccount(ctx context.Context, req *account.CreateAccountRequest) (*account.CreateAccountResponse, error) {
-	violations := validateCreateAccountRequest(req)
-	if violations != nil {
-		return nil, invalidArgumentError(violations)
-	}
-
-	hashedPassword, err := utils.HashPassword(req.GetPassword())
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to hash password: %s", err)
-	}
-
-	code := strings.ReplaceAll(req.GetCompanyName(), " ", "")
-
-	arg := db.CreateAccountTxParams{
-		Code:           code,
-		CompanyName:    req.GetCompanyName(),
-		Email:          req.GetEmail(),
-		Name:           req.GetName(),
-		Lastname:       req.GetLastname(),
-		Username:       req.GetUsername(),
-		Country:        req.GetCountry(),
-		HashedPassword: hashedPassword,
-	}
-
-	result, err := server.store.CreateAccountTx(ctx, arg)
-	if err != nil {
-		errCode := db.ErrorCode(err)
-		if errCode == db.UniqueViolation {
-			return nil, status.Error(codes.Internal, "Failed to create account: code already in use")
-		}
-		return nil, status.Errorf(codes.Internal, "Fail to create account: %s", err)
-	}
-
-	rsp := &account.CreateAccountResponse{
-		Account: convertAccount(result.Account),
-		User:    convertUser(result.User),
 	}
 	return rsp, nil
 }

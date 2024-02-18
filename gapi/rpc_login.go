@@ -3,6 +3,7 @@ package gapi
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 
 	db "github.com/nicodanke/inventapp_v2/db/sqlc"
@@ -31,7 +32,7 @@ func (server *Server) Login(ctx context.Context, req *login.LoginRequest) (*logi
 	}
 
 	if !account.Active {
-		return nil, status.Errorf(codes.Unauthenticated, "Account not active")
+		return nil, unauthenticatedError(fmt.Errorf("account not active"))
 	}
 
 	user, err := server.store.GetUserByUsername(ctx, req.GetUsername())
@@ -42,17 +43,21 @@ func (server *Server) Login(ctx context.Context, req *login.LoginRequest) (*logi
 		return nil, status.Errorf(codes.Internal, "Failed to get user: %s", err)
 	}
 
+	if !user.Active {
+		return nil, unauthenticatedError(fmt.Errorf("user not active"))
+	}
+
 	err = utils.CheckPassword(req.GetPassword(), user.Password)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "Invalid password: %s", err)
 	}
 
-	accessToken, accessPayload, err := server.tokenMaker.CreateToken(user.Username, server.config.AccessTokenDuration)
+	accessToken, accessPayload, err := server.tokenMaker.CreateToken(user.ID, account.ID, account.Code, server.config.AccessTokenDuration)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Error creating accessToken: %s", err)
 	}
 
-	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(user.Username, server.config.RefreshTokenDuration)
+	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(user.ID, account.ID, account.Code, server.config.RefreshTokenDuration)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Error creating refreshToken: %s", err)
 	}

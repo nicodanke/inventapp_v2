@@ -10,6 +10,7 @@ import (
 	context "context"
 	account "github.com/nicodanke/inventapp_v2/pb/requests/v1/account"
 	login "github.com/nicodanke/inventapp_v2/pb/requests/v1/login"
+	user "github.com/nicodanke/inventapp_v2/pb/requests/v1/user"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -24,6 +25,7 @@ const (
 	InventAppV1_Login_FullMethodName         = "/pb.InventAppV1/Login"
 	InventAppV1_CreateAccount_FullMethodName = "/pb.InventAppV1/CreateAccount"
 	InventAppV1_UpdateAccount_FullMethodName = "/pb.InventAppV1/UpdateAccount"
+	InventAppV1_CreateUser_FullMethodName    = "/pb.InventAppV1/CreateUser"
 )
 
 // InventAppV1Client is the client API for InventAppV1 service.
@@ -35,6 +37,8 @@ type InventAppV1Client interface {
 	// ACCOUNT
 	CreateAccount(ctx context.Context, in *account.CreateAccountRequest, opts ...grpc.CallOption) (*account.CreateAccountResponse, error)
 	UpdateAccount(ctx context.Context, in *account.UpdateAccountRequest, opts ...grpc.CallOption) (*account.UpdateAccountResponse, error)
+	// USER
+	CreateUser(ctx context.Context, in *user.CreateUserRequest, opts ...grpc.CallOption) (*user.CreateUserResponse, error)
 }
 
 type inventAppV1Client struct {
@@ -72,6 +76,15 @@ func (c *inventAppV1Client) UpdateAccount(ctx context.Context, in *account.Updat
 	return out, nil
 }
 
+func (c *inventAppV1Client) CreateUser(ctx context.Context, in *user.CreateUserRequest, opts ...grpc.CallOption) (*user.CreateUserResponse, error) {
+	out := new(user.CreateUserResponse)
+	err := c.cc.Invoke(ctx, InventAppV1_CreateUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InventAppV1Server is the server API for InventAppV1 service.
 // All implementations must embed UnimplementedInventAppV1Server
 // for forward compatibility
@@ -81,6 +94,8 @@ type InventAppV1Server interface {
 	// ACCOUNT
 	CreateAccount(context.Context, *account.CreateAccountRequest) (*account.CreateAccountResponse, error)
 	UpdateAccount(context.Context, *account.UpdateAccountRequest) (*account.UpdateAccountResponse, error)
+	// USER
+	CreateUser(context.Context, *user.CreateUserRequest) (*user.CreateUserResponse, error)
 	mustEmbedUnimplementedInventAppV1Server()
 }
 
@@ -96,6 +111,9 @@ func (UnimplementedInventAppV1Server) CreateAccount(context.Context, *account.Cr
 }
 func (UnimplementedInventAppV1Server) UpdateAccount(context.Context, *account.UpdateAccountRequest) (*account.UpdateAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAccount not implemented")
+}
+func (UnimplementedInventAppV1Server) CreateUser(context.Context, *user.CreateUserRequest) (*user.CreateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
 }
 func (UnimplementedInventAppV1Server) mustEmbedUnimplementedInventAppV1Server() {}
 
@@ -164,6 +182,24 @@ func _InventAppV1_UpdateAccount_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InventAppV1_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(user.CreateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InventAppV1Server).CreateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InventAppV1_CreateUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InventAppV1Server).CreateUser(ctx, req.(*user.CreateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InventAppV1_ServiceDesc is the grpc.ServiceDesc for InventAppV1 service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -182,6 +218,10 @@ var InventAppV1_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateAccount",
 			Handler:    _InventAppV1_UpdateAccount_Handler,
+		},
+		{
+			MethodName: "CreateUser",
+			Handler:    _InventAppV1_CreateUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
