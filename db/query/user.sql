@@ -13,7 +13,7 @@ WHERE account_id = $1 AND id = $2 LIMIT 1;
 SELECT * FROM "user"
 WHERE username = $1 LIMIT 1;
 
--- name: ListUsers :many
+-- name: GetUsers :many
 SELECT * FROM "user"
 WHERE account_id = $1
 ORDER BY name, lastname

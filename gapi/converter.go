@@ -21,6 +21,16 @@ func convertUser(user db.User) *models.User {
 	}
 }
 
+func convertUsers(users []db.User) []*models.User {
+	result := make([]*models.User, len(users))
+
+	for i, v := range users {
+		result[i] = convertUser(v)
+	}
+
+	return result
+}
+
 func convertAccount(user db.Account) *models.Account {
 	return &models.Account{
 		Id:          user.ID,

@@ -26,6 +26,7 @@ const (
 	InventAppV1_Login_FullMethodName         = "/pb.InventAppV1/Login"
 	InventAppV1_CreateAccount_FullMethodName = "/pb.InventAppV1/CreateAccount"
 	InventAppV1_UpdateAccount_FullMethodName = "/pb.InventAppV1/UpdateAccount"
+	InventAppV1_GetUsers_FullMethodName      = "/pb.InventAppV1/GetUsers"
 	InventAppV1_CreateUser_FullMethodName    = "/pb.InventAppV1/CreateUser"
 	InventAppV1_GetRoles_FullMethodName      = "/pb.InventAppV1/GetRoles"
 	InventAppV1_CreateRole_FullMethodName    = "/pb.InventAppV1/CreateRole"
@@ -41,6 +42,7 @@ type InventAppV1Client interface {
 	CreateAccount(ctx context.Context, in *account.CreateAccountRequest, opts ...grpc.CallOption) (*account.CreateAccountResponse, error)
 	UpdateAccount(ctx context.Context, in *account.UpdateAccountRequest, opts ...grpc.CallOption) (*account.UpdateAccountResponse, error)
 	// USER
+	GetUsers(ctx context.Context, in *user.GetUsersRequest, opts ...grpc.CallOption) (*user.GetUsersResponse, error)
 	CreateUser(ctx context.Context, in *user.CreateUserRequest, opts ...grpc.CallOption) (*user.CreateUserResponse, error)
 	// ROLE
 	GetRoles(ctx context.Context, in *role.GetRolesRequest, opts ...grpc.CallOption) (*role.GetRolesResponse, error)
@@ -76,6 +78,15 @@ func (c *inventAppV1Client) CreateAccount(ctx context.Context, in *account.Creat
 func (c *inventAppV1Client) UpdateAccount(ctx context.Context, in *account.UpdateAccountRequest, opts ...grpc.CallOption) (*account.UpdateAccountResponse, error) {
 	out := new(account.UpdateAccountResponse)
 	err := c.cc.Invoke(ctx, InventAppV1_UpdateAccount_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *inventAppV1Client) GetUsers(ctx context.Context, in *user.GetUsersRequest, opts ...grpc.CallOption) (*user.GetUsersResponse, error) {
+	out := new(user.GetUsersResponse)
+	err := c.cc.Invoke(ctx, InventAppV1_GetUsers_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -119,6 +130,7 @@ type InventAppV1Server interface {
 	CreateAccount(context.Context, *account.CreateAccountRequest) (*account.CreateAccountResponse, error)
 	UpdateAccount(context.Context, *account.UpdateAccountRequest) (*account.UpdateAccountResponse, error)
 	// USER
+	GetUsers(context.Context, *user.GetUsersRequest) (*user.GetUsersResponse, error)
 	CreateUser(context.Context, *user.CreateUserRequest) (*user.CreateUserResponse, error)
 	// ROLE
 	GetRoles(context.Context, *role.GetRolesRequest) (*role.GetRolesResponse, error)
@@ -138,6 +150,9 @@ func (UnimplementedInventAppV1Server) CreateAccount(context.Context, *account.Cr
 }
 func (UnimplementedInventAppV1Server) UpdateAccount(context.Context, *account.UpdateAccountRequest) (*account.UpdateAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAccount not implemented")
+}
+func (UnimplementedInventAppV1Server) GetUsers(context.Context, *user.GetUsersRequest) (*user.GetUsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUsers not implemented")
 }
 func (UnimplementedInventAppV1Server) CreateUser(context.Context, *user.CreateUserRequest) (*user.CreateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
@@ -215,6 +230,24 @@ func _InventAppV1_UpdateAccount_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InventAppV1_GetUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(user.GetUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InventAppV1Server).GetUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InventAppV1_GetUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InventAppV1Server).GetUsers(ctx, req.(*user.GetUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _InventAppV1_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(user.CreateUserRequest)
 	if err := dec(in); err != nil {
@@ -287,6 +320,10 @@ var InventAppV1_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateAccount",
 			Handler:    _InventAppV1_UpdateAccount_Handler,
+		},
+		{
+			MethodName: "GetUsers",
+			Handler:    _InventAppV1_GetUsers_Handler,
 		},
 		{
 			MethodName: "CreateUser",

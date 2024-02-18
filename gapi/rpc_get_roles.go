@@ -25,7 +25,7 @@ func (server *Server) GetRoles(ctx context.Context, req *role.GetRolesRequest) (
 		limit = req.GetSize()
 	}
 
-	offset := int32(1)
+	offset := int32(0)
 	if req.Page != nil {
 		offset = req.GetPage() * limit
 	}

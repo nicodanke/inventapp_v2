@@ -139,7 +139,7 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 	return i, err
 }
 
-const listUsers = `-- name: ListUsers :many
+const getUsers = `-- name: GetUsers :many
 SELECT id, username, password, name, lastname, email, phone, active, is_admin, created_at, updated_at, password_changed_at, role_id, account_id FROM "user"
 WHERE account_id = $1
 ORDER BY name, lastname
@@ -147,14 +147,14 @@ LIMIT $2
 OFFSET $3
 `
 
-type ListUsersParams struct {
+type GetUsersParams struct {
 	AccountID int64 `json:"account_id"`
 	Limit     int32 `json:"limit"`
 	Offset    int32 `json:"offset"`
 }
 
-func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error) {
-	rows, err := q.db.Query(ctx, listUsers, arg.AccountID, arg.Limit, arg.Offset)
+func (q *Queries) GetUsers(ctx context.Context, arg GetUsersParams) ([]User, error) {
+	rows, err := q.db.Query(ctx, getUsers, arg.AccountID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

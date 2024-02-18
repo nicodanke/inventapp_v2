@@ -28,10 +28,10 @@ type Querier interface {
 	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	GetUser(ctx context.Context, arg GetUserParams) (User, error)
 	GetUserByUsername(ctx context.Context, username string) (User, error)
+	GetUsers(ctx context.Context, arg GetUsersParams) ([]User, error)
 	Getplan(ctx context.Context, id int64) (Plan, error)
 	ListAccounts(ctx context.Context, arg ListAccountsParams) ([]Account, error)
 	ListPlans(ctx context.Context, arg ListPlansParams) ([]Plan, error)
-	ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error)
 	UpdateAccount(ctx context.Context, arg UpdateAccountParams) (Account, error)
 	UpdateAccountPlan(ctx context.Context, arg UpdateAccountPlanParams) (AccountPlan, error)
 }

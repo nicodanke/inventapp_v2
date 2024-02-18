@@ -5,6 +5,7 @@ package pb;
 import "google/api/annotations.proto";
 import "requests/v1/account/rpc_create_account.proto";
 import "requests/v1/account/rpc_update_account.proto";
+import "requests/v1/user/rpc_get_users.proto";
 import "requests/v1/user/rpc_create_user.proto";
 import "requests/v1/role/rpc_get_roles.proto";
 import "requests/v1/role/rpc_create_role.proto";
@@ -64,6 +65,16 @@ service InventAppV1 {
 
 
     // USER
+    rpc GetUsers (inventapp_v2.requests.v1.user.GetUsersRequest) returns (inventapp_v2.requests.v1.user.GetUsersResponse) {
+        option (google.api.http) = {
+            get: "/v1/users"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Allow to get all users paginated. Auth required";
+            summary: "Get all users"
+        };  
+    }
+
     rpc CreateUser (inventapp_v2.requests.v1.user.CreateUserRequest) returns (inventapp_v2.requests.v1.user.CreateUserResponse) {
         option (google.api.http) = {
             post: "/v1/users"
