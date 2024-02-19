@@ -131,10 +131,10 @@ func runGRPCGatewayServer(config utils.Config, store db.Store, notifier sse.Noti
 func runServerSentEvents(config utils.Config, handlerEvent *sse.HandlerEvent) {
 	server, err := sse.NewServer(config, handlerEvent)
 	if err != nil {
-		log.Error().Err(err).Msg("Cannor create HTTP SSE server")
+		log.Error().Err(err).Msg("Cannot create HTTP SSE server")
 	}
 
-	err = server.Start(config.HTTPServerAddress)
+	err = server.Start(config.SSEAddress)
 	if err != nil {
 		log.Error().Err(err).Msg("Cannot start HTTP SSE server")
 	}

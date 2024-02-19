@@ -1,16 +1,14 @@
 package sse
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
-	"strconv"
 	"sync"
-)
 
-const format = "event:%s\ndata:%s\n\n"
+	"github.com/gin-gonic/gin"
+	"github.com/nicodanke/inventapp_v2/token"
+)
 
 type eventMessage struct {
 	EventName string
@@ -43,40 +41,16 @@ func NewHandlerEvent() *HandlerEvent {
 	}
 }
 
-func (h *HandlerEvent) Handler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	w.Header().Set("Content-Type", "text/event-stream")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Connection", "keep-alive")
+func (h *HandlerEvent) Handler(ctx *gin.Context) {
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 
-	accountIdParam := r.URL.Query().Get("accountId")
-	userIdParam := r.URL.Query().Get("userId")
+	client := newClient(authPayload.UserID, authPayload.AccountID)
 
-	accountId, err := strconv.ParseInt(accountIdParam, 10, 64)
-	if err != nil {
-		LogError(err, "Invalid accountId parameter")
-		return
-	}
-
-	userId, err := strconv.ParseInt(userIdParam, 10, 64)
-	if err != nil {
-		LogError(err, "Invalid userId parameter")
-		return
-	}
-
-	flusher, ok := w.(http.Flusher)
-	if !ok {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	c := newClient(userId, accountId)
-
-	h.registerClient(c)
-	LogInfo(fmt.Sprintf("Connected client %d of account %d\n", userId, accountId))
-	c.onLine(r.Context(), w, flusher)
-	LogInfo(fmt.Sprintf("Disconnected client %d of account %d\n", userId, accountId))
-	h.unregisterClient(userId)
+	h.registerClient(client)
+	LogInfo(fmt.Sprintf("Connected client %d of account %d\n", authPayload.UserID, authPayload.AccountID))
+	client.onLine(ctx)
+	LogInfo(fmt.Sprintf("Disconnected client %d of account %d\n", authPayload.UserID, authPayload.AccountID))
+	h.unregisterClient(authPayload.UserID)
 }
 
 func (h *HandlerEvent) registerClient(c *client) {
@@ -94,21 +68,22 @@ func (h *HandlerEvent) unregisterClient(id int64) {
 	delete(h.clients, id)
 }
 
-func (c *client) onLine(ctx context.Context, w io.Writer, flusher http.Flusher) {
-	for {
-		select {
-		case m := <-c.sendMessage:
-			data, err := json.Marshal(m.Data)
+func (client *client) onLine(ctx *gin.Context) {
+	ctx.Stream(func(w io.Writer) bool {
+		if msg, ok := <-client.sendMessage; ok {
+			data, err := json.Marshal(msg.Data)
 			if err != nil {
 				LogError(err, "")
 			}
 
-			fmt.Fprintf(w, format, m.EventName, string(data))
-			flusher.Flush()
-		case <-ctx.Done():
-			return
+			ctx.SSEvent(msg.EventName, string(data))
+			return true
 		}
-	}
+		if _, ok := <-ctx.Done(); ok {
+			return false
+		}
+		return false
+	})
 }
 
 func (h *HandlerEvent) BroadcastMessage(msg eventMessage) {
