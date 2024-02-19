@@ -6,7 +6,12 @@ import (
 
 	db "github.com/nicodanke/inventapp_v2/db/sqlc"
 	"github.com/nicodanke/inventapp_v2/pb/requests/v1/user"
+	"github.com/nicodanke/inventapp_v2/sse"
 	"google.golang.org/protobuf/types/known/emptypb"
+)
+
+const (
+	sse_delete_user = "delete-user"
 )
 
 func (server *Server) DeleteUser(ctx context.Context, req *user.DeleteUserRequest) (*emptypb.Empty, error) {
@@ -28,6 +33,11 @@ func (server *Server) DeleteUser(ctx context.Context, req *user.DeleteUserReques
 	if err != nil {
 		return nil, internalError(fmt.Sprintf("failed to delete user with id: %d", req.GetId()), err)
 	}
+
+	// Notify delete user
+	var data = map[string]any{}
+	data["id"] = req.GetId()
+	server.notifier.BoadcastMessageToAccount(sse.NewEventMessage(sse_delete_user, data), authPayload.AccountID, &authPayload.UserID)
 
 	return &emptypb.Empty{}, nil
 }

@@ -15,6 +15,7 @@ import (
 	_ "github.com/nicodanke/inventapp_v2/doc/statik"
 	"github.com/nicodanke/inventapp_v2/gapi"
 	"github.com/nicodanke/inventapp_v2/pb"
+	"github.com/nicodanke/inventapp_v2/sse"
 	"github.com/nicodanke/inventapp_v2/utils"
 	"github.com/rakyll/statik/fs"
 	"github.com/rs/zerolog"
@@ -43,8 +44,12 @@ func main() {
 
 	store := db.NewStore(connPool)
 
-	go runGRPCGatewayServer(config, store)
-	runGRPCServer(config, store)
+	// Creates HandlerEvent to send events through HTTP Server Sent Events (SSE)
+	handlerEvent := sse.NewHandlerEvent()
+
+	go runGRPCGatewayServer(config, store, handlerEvent)
+	go runServerSentEvents(config, handlerEvent)
+	runGRPCServer(config, store, handlerEvent)
 }
 
 func runDBMigrations(migrationUrl string, dbSource string) {
@@ -60,8 +65,8 @@ func runDBMigrations(migrationUrl string, dbSource string) {
 	log.Info().Msg("DB migrations runned successfully")
 }
 
-func runGRPCServer(config utils.Config, store db.Store) {
-	server, err := gapi.NewServer(config, store)
+func runGRPCServer(config utils.Config, store db.Store, notifier sse.Notifier) {
+	server, err := gapi.NewServer(config, store, notifier)
 	if err != nil {
 		log.Error().Err(err).Msg("Cannot create server")
 	}
@@ -83,8 +88,8 @@ func runGRPCServer(config utils.Config, store db.Store) {
 	}
 }
 
-func runGRPCGatewayServer(config utils.Config, store db.Store) {
-	server, err := gapi.NewServer(config, store)
+func runGRPCGatewayServer(config utils.Config, store db.Store, notifier sse.Notifier) {
+	server, err := gapi.NewServer(config, store, notifier)
 	if err != nil {
 		log.Error().Err(err).Msg("Cannot create server")
 	}
@@ -120,5 +125,17 @@ func runGRPCGatewayServer(config utils.Config, store db.Store) {
 	err = http.Serve(listener, handler)
 	if err != nil {
 		log.Error().Err(err).Msg("Cannor start HTTP Gateway Server")
+	}
+}
+
+func runServerSentEvents(config utils.Config, handlerEvent *sse.HandlerEvent) {
+	server, err := sse.NewServer(config, handlerEvent)
+	if err != nil {
+		log.Error().Err(err).Msg("Cannor create HTTP SSE server")
+	}
+
+	err = server.Start(config.HTTPServerAddress)
+	if err != nil {
+		log.Error().Err(err).Msg("Cannot start HTTP SSE server")
 	}
 }

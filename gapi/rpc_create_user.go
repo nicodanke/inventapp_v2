@@ -7,10 +7,15 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	db "github.com/nicodanke/inventapp_v2/db/sqlc"
 	"github.com/nicodanke/inventapp_v2/pb/requests/v1/user"
+	"github.com/nicodanke/inventapp_v2/sse"
 	"github.com/nicodanke/inventapp_v2/utils"
 	"github.com/nicodanke/inventapp_v2/validators"
 	userValidator "github.com/nicodanke/inventapp_v2/validators/user"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
+)
+
+const (
+	sse_create_user = "create-user"
 )
 
 func (server *Server) CreateUser(ctx context.Context, req *user.CreateUserRequest) (*user.CreateUserResponse, error) {
@@ -59,6 +64,10 @@ func (server *Server) CreateUser(ctx context.Context, req *user.CreateUserReques
 	rsp := &user.CreateUserResponse{
 		User: convertUser(result),
 	}
+
+	// Notify user creation
+	server.notifier.BoadcastMessageToAccount(sse.NewEventMessage(sse_create_user, rsp), authPayload.AccountID, &authPayload.UserID)
+
 	return rsp, nil
 }
 

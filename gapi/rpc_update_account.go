@@ -7,11 +7,16 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	db "github.com/nicodanke/inventapp_v2/db/sqlc"
 	"github.com/nicodanke/inventapp_v2/pb/requests/v1/account"
+	"github.com/nicodanke/inventapp_v2/sse"
 	"github.com/nicodanke/inventapp_v2/validators"
 	accountValidator "github.com/nicodanke/inventapp_v2/validators/account"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+)
+
+const (
+	sse_update_account = "update-account"
 )
 
 func (server *Server) UpdateAccount(ctx context.Context, req *account.UpdateAccountRequest) (*account.UpdateAccountResponse, error) {
@@ -59,6 +64,10 @@ func (server *Server) UpdateAccount(ctx context.Context, req *account.UpdateAcco
 	rsp := &account.UpdateAccountResponse{
 		Account: convertAccount(result),
 	}
+
+	// Notify account update
+	server.notifier.BoadcastMessageToAccount(sse.NewEventMessage(sse_update_account, rsp), result.ID, nil)
+
 	return rsp, nil
 }
 
